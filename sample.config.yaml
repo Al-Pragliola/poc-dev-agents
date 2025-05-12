@@ -1,0 +1,260 @@
+engine: "ollama"
+goal: "Build a website, this website consists of a single page that displays the string 'Hello, World!', the frontend should be written in React and the backend should be written in Go. The project should be runnable locally using a simple Makefile."
+agents:
+  - name: "project-manager"
+    model: "ebdm/gemma3-enhanced:12b"
+    prompt: >
+      You are a project manager. You are responsible for managing the project. You are responsible for the project's success.
+      In your team you have a backend developer and a frontend developer. One of your tasks is to split the goal into smaller tasks and assign them to the team members.
+
+      Once you have sliced the goal into smaller tasks, you can assign them to the team members by calling the "assign-task" tool, be sure to give detailed instructions to the agent using the "task" field.
+      Please be sure to write the tasks in a way that is easy to understand and complete.
+
+      The names of your team members are:
+      - backend-developer
+      - frontend-developer
+    tools:
+      - type: "function"
+        function:
+          name: "assign-task"
+          description: "Assign a task to an agent"
+          parameters:
+            type: "object"
+            required:
+              - task
+              - assignee
+            properties:
+              task:
+                type: "string"
+                description: "The task to assign"
+              assignee:
+                type: "string"
+                description: "The agent to assign the task to"
+  - name: "backend-developer"
+    model: "ebdm/gemma3-enhanced:12b"
+    prompt: >
+      You are a backend developer. You are responsible for the backend of the project. You are responsible for the project's success.
+      You will be given a task to complete, there are multiple tools available to you:
+
+      - "run-command": Will allow you to run a command in the working directory of the project. For example:
+        ```
+        run-command:
+          command: "go mod init $PROJECT_NAME"
+          working_directory: "."
+        ```
+
+        You can use the "run-command" tool multiple times to run multiple commands.
+
+      - "write-file": Will allow you to write a file to the working directory of the project. For example:
+        ```
+        write-file:
+          file: "main.go"
+          content: "package main"
+        ```
+
+      - "read-file": Will allow you to read a file from the working directory of the project. For example:
+        ```
+        read-file:
+          file: "main.go"
+        ```
+
+      - "list-files": Will allow you to list the files in the working directory of the project. For example:
+        ```
+        list-files:
+          working_directory: "."
+        ```
+
+      - "edit-file": Will allow you to edit a file in the working directory of the project. For example:
+        ```
+        edit-file:
+          file: "main.go"
+          content: "package main"
+        ```
+
+      Use those tools to complete the task you have been given, and remember that you can use more than one tool in a single task.
+
+    tools:
+      - type: "function"
+        function:
+          name: "run-command"
+          description: "Run a command"
+          parameters:
+            type: "object"
+            required:
+              - command
+            properties:
+              command:
+                type: "string"
+                description: "The command to run"
+              working_directory:
+                type: "string"
+                description: "The working directory of the command"
+      - type: "function"
+        function:
+          name: "write-file"
+          description: "Write a file"
+          parameters:
+            type: "object"
+            required:
+              - file
+              - content
+            properties:
+              file:
+                type: "string"
+                description: "The file to write"
+              content:
+                type: "string"
+      - type: "function"
+        function:
+          name: "read-file"
+          description: "Read a file"
+          parameters:
+            type: "object"
+            required:
+              - file
+            properties:
+              file:
+                type: "string"
+                description: "The file to read"
+      - type: "function"
+        function:
+          name: "list-files"
+          description: "List the files in the working directory"
+          parameters:
+            type: "object"
+            required:
+              - working_directory
+            properties:
+              working_directory:
+                type: "string"
+                description: "The working directory to list the files in"
+      - type: "function"
+        function:
+          name: "edit-file"
+          description: "Edit a file"
+          parameters:
+            type: "object"
+            required:
+              - file
+              - content
+            properties:
+              file:
+                type: "string"
+                description: "The file to edit"
+              content:
+                type: "string"
+                description: "The content to write to the file"
+  - name: "frontend-developer"
+    model: "ebdm/gemma3-enhanced:12b"
+    prompt: >
+      You are a frontend developer. You are responsible for the frontend of the project. You are responsible for the project's success.
+      You will be given a task to complete, there are multiple tools available to you:
+
+      - "run-command": Will allow you to run a command in the working directory of the project. For example:
+        ```
+        run-command:
+          command: "go mod init $PROJECT_NAME"
+          working_directory: "."
+        ```
+
+        You can use the "run-command" tool multiple times to run multiple commands.
+
+      - "write-file": Will allow you to write a file to the working directory of the project. For example:
+        ```
+        write-file:
+          file: "main.go"
+          content: "package main"
+        ```
+
+      - "read-file": Will allow you to read a file from the working directory of the project. For example:
+        ```
+        read-file:
+          file: "main.go"
+        ```
+
+      - "list-files": Will allow you to list the files in the working directory of the project. For example:
+        ```
+        list-files:
+          working_directory: "."
+        ```
+
+      - "edit-file": Will allow you to edit a file in the working directory of the project. For example:
+        ```
+        edit-file:
+          file: "main.go"
+          content: "package main"
+        ```
+
+      Use those tools to complete the task you have been given, and remember that you can use more than one tool in a single task.
+
+    tools:
+      - type: "function"
+        function:
+          name: "run-command"
+          description: "Run a command"
+          parameters:
+            type: "object"
+            required:
+              - command
+            properties:
+              command:
+                type: "string"
+                description: "The command to run"
+              working_directory:
+                type: "string"
+                description: "The working directory of the command"
+      - type: "function"
+        function:
+          name: "write-file"
+          description: "Write a file"
+          parameters:
+            type: "object"
+            required:
+              - file
+              - content
+            properties:
+              file:
+                type: "string"
+                description: "The file to write"
+              content:
+                type: "string"
+      - type: "function"
+        function:
+          name: "read-file"
+          description: "Read a file"
+          parameters:
+            type: "object"
+            required:
+              - file
+            properties:
+              file:
+                type: "string"
+                description: "The file to read"
+      - type: "function"
+        function:
+          name: "list-files"
+          description: "List the files in the working directory"
+          parameters:
+            type: "object"
+            required:
+              - working_directory
+            properties:
+              working_directory:
+                type: "string"
+                description: "The working directory to list the files in"
+      - type: "function"
+        function:
+          name: "edit-file"
+          description: "Edit a file"
+          parameters:
+            type: "object"
+            required:
+              - file
+              - content
+            properties:
+              file:
+                type: "string"
+                description: "The file to edit"
+              content:
+                type: "string"
+                description: "The content to write to the file"
